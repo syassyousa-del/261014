@@ -1,0 +1,1 @@
+This folder is for game sound effects. Replace the dummy files with actual audio files.

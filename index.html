@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SF Wars Clone</title>
+    <meta name="theme-color" content="#2b2b36">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="FamiWars">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-container">
+        <div id="game-container">
+            <div id="canvas-wrapper">
+                <canvas id="gameCanvas" width="800" height="600"></canvas>
+                <div id="unit-info" style="display: none;">
+                    <div id="unit-info-text"></div>
+                    <button id="unload-btn" class="panel-btn primary" style="display: none; margin-top: 10px; width: 100%; font-size: 14px; padding: 6px;">降車</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="side-panel">
+            <div id="panel-handle" class="panel-handle">
+                <div class="handle-bar"></div>
+            </div>
+            <div id="turn-indicator">RED軍</div>
+            <div id="funds-indicator">資金: 0 G</div>
+            <div id="audio-controls">
+                <label for="bgm-volume-slider">BGM</label>
+                <input id="bgm-volume-slider" type="range" min="0" max="100" value="60">
+                <span id="bgm-volume-value">60%</span>
+            </div>
+            
+            <div class="panel-spacer"></div>
+
+            <div id="game-controls">
+                <div style="display: flex; gap: 5px;">
+                    <button id="zoom-in-btn" class="panel-btn" style="flex: 1; font-size: 14px;">ズーム＋</button>
+                    <button id="zoom-out-btn" class="panel-btn" style="flex: 1; font-size: 14px;">ズーム－</button>
+                </div>
+                <div style="margin-top:8px; display:flex; align-items:center; gap:8px;">
+                    <label for="ai-speed-slider" style="flex:0 0 56px; font-size:12px;">AI速度</label>
+                    <input id="ai-speed-slider" type="range" min="1" max="10" value="1" style="flex:1;">
+                    <span id="ai-speed-value" style="width:48px; text-align:right; font-size:12px;">1x</span>
+                </div>
+                <div style="margin-top:8px; display:flex; align-items:center; gap:8px;">
+                    <label for="ai-difficulty-select" style="flex:0 0 56px; font-size:12px;">AI強さ</label>
+                    <select id="ai-difficulty-select" style="flex:1; background:#222; color:#fff; border:1px solid #aaa; padding:4px; border-radius:4px; font-size:12px;">
+                        <option value="easy">楽勝</option>
+                        <option value="normal">そこつよ</option>
+                        <option value="hard">とてつよ</option>
+                    </select>
+                </div>
+                <button id="end-turn-btn" class="panel-btn primary" style="font-size: 16px; padding: 12px 24px;">ターン終了</button>
+                <button id="save-game-btn" class="panel-btn" style="font-size: 16px; padding: 10px 24px;">セーブ</button>
+            </div>
+
+            <div id="scenario-panel">
+                <a href="editor.html" class="panel-btn">マップエディター</a>
+                <input type="file" id="load-file-input" style="display: none;" accept=".json">
+                <button id="load-file-btn" class="panel-btn">ファイルから読み込み</button>
+                <button id="reset-scenario-btn" class="panel-btn danger" style="display: none;">マップをリセット</button>
+            </div>
+        </div>
+    </div>
+
+<!-- Production Overlay -->
+<div id="production-overlay" class="overlay" style="display:none; justify-content:center; align-items:center; position:fixed; inset:0; background:rgba(255,255,255,0.1); backdrop-filter:blur(10px);">
+  <div class="overlay-content production-bg-container" id="production-box" style="padding:20px; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <h3 style="margin-top:0;" class="production-title">ユニット生産</h3>
+    <div style="margin-bottom: 15px; font-size: 16px; font-weight: bold;" class="production-title">所持金: <span id="production-funds-amount" class="production-gold">0</span> <span class="production-gold">G</span></div>
+    <select id="production-select" style="width:100%; margin-bottom:15px; background:rgba(0,0,0,0.5); color:#fff; border:1px solid #aaa; padding:8px; border-radius:6px; font-weight:bold; font-size: 14px;"></select>
+    <div style="display:flex; justify-content:center; gap:10px;">
+        <button id="production-confirm-btn" class="panel-btn primary">生産</button>
+        <button id="production-cancel-btn" class="panel-btn">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+    <!-- Start Battle Overlay -->
+    <div id="start-screen-overlay">
+        <div id="start-box">
+            <h1 style="color: #ffaaaa; text-align: center; margin-bottom: 30px; font-size: 48px;">Famicom Wars</h1>
+<button id="start-battle-btn" class="panel-btn primary" style="font-size: 24px; padding: 15px 40px;">戦闘開始</button>
+<button id="load-map-btn" class="panel-btn" style="font-size: 24px; padding: 15px 40px; margin-left: 10px;">マップ</button>
+<button id="resume-game-btn" class="panel-btn" style="font-size: 24px; padding: 15px 40px; margin-left: 10px;">再開</button>
+</div>        </div>
+    </div>
+
+    <!-- Map Selection Overlay -->
+    <div id="map-select-overlay" class="overlay" style="display:none; justify-content:center; align-items:center; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index: 2000;">
+        <div class="overlay-content" style="background:#222; padding:30px; border-radius:12px; border:2px solid #aaa; color:white; width:400px; max-height:80vh; display:flex; flex-direction:column;">
+            <h2 style="margin-top:0; text-align:center; color:#ffaaaa;">マップ選択</h2>
+            <p style="font-size:14px; color:#ccc; text-align:center;">同梱マップから読み込みます</p>
+            <div id="map-list" style="overflow-y:auto; flex-grow:1; margin-bottom:20px; display:flex; flex-direction:column; gap:10px;">
+                <!-- Map buttons will be generated here -->
+            </div>
+            <button id="close-map-select-btn" class="panel-btn">閉じる</button>
+        </div>
+    </div>
+
+    <!-- Save Selection Overlay -->
+    <div id="save-select-overlay" class="overlay" style="display:none; justify-content:center; align-items:center; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index: 2000;">
+        <div class="overlay-content" style="background:#222; padding:30px; border-radius:12px; border:2px solid #aaa; color:white; width:420px; max-height:80vh; display:flex; flex-direction:column;">
+            <h2 style="margin-top:0; text-align:center; color:#ffaaaa;">セーブデータ選択</h2>
+            <p style="font-size:14px; color:#ccc; text-align:center;">サーバー起動時は ./save/、直開き時はファイルから読み込みます</p>
+            <div id="save-list" style="overflow-y:auto; flex-grow:1; margin-bottom:20px; display:flex; flex-direction:column; gap:10px;"></div>
+            <button id="close-save-select-btn" class="panel-btn">閉じる</button>
+        </div>
+    </div>
+
+
+    <script src="map.js"></script>
+    <script src="assets.js"></script>
+    <script src="unit.js"></script>
+    <script src="sound.js"></script>
+    <script src="game.js"></script>
+    <script src="renderer.js"></script>
+    <script src="input.js"></script>
+    <script src="bundled_maps.js"></script>
+    <script src="pwa.js"></script>
+    <script src="swipe-panel.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

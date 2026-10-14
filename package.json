@@ -1,0 +1,14 @@
+{
+  "name": "famicom-wars-clone",
+  "version": "0.1.0",
+  "description": "Famicom Wars Clone packaged as an Electron desktop app",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-packager . FamicomWarsClone --overwrite --platform=win32 --arch=x64 --out=dist --prune=false"
+  },
+  "devDependencies": {
+    "electron": "^26.0.0",
+    "electron-packager": "^17.1.0"
+  }
+}

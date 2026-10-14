@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Famicom Wars Map Editor</title>
+    <meta name="theme-color" content="#2b2b36">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="FamiWars">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="editor.css">
+</head>
+<body>
+    <div id="editor-container">
+        <!-- Canvas Area -->
+        <div id="canvas-wrapper">
+            <canvas id="editorCanvas" width="800" height="600"></canvas>
+        </div>
+    </div>
+
+    <!-- Sidebar for unit and tool palettes -->
+    <div id="sidebar">
+        <div class="toolbar-section">
+            <h3>地形</h3>
+            <div class="brush-grid" id="terrain-brushes-toolbar"></div>
+        </div>
+        <!-- Unit palettes -->
+        <div class="toolbar-section">
+            <h3>ユニット (P1)</h3>
+            <div class="brush-grid" id="unit-p1-toolbar"></div>
+        </div>
+        <div class="toolbar-section">
+            <h3>ユニット (P2)</h3>
+            <div class="brush-grid" id="unit-p2-toolbar"></div>
+        </div>
+        <div class="toolbar-section">
+            <h3>ツール</h3>
+            <div class="brush-grid" id="tools-toolbar"></div>
+        </div>
+
+            <!-- Action Buttons -->
+            <div id="actions">
+                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                    <button id="zoom-in-btn" class="action-btn" style="flex: 1; padding: 6px;">ズーム＋</button>
+                    <button id="zoom-out-btn" class="action-btn" style="flex: 1; padding: 6px;">ズーム－</button>
+                </div>
+                <input type="text" id="map-name-input" placeholder="マップ名を入力" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #555; background: #333; color: #fff; box-sizing: border-box;">
+                <button id="save-btn" class="action-btn primary">保存</button>
+                <input type="file" id="load-file-input" style="display: none;" accept=".json">
+                <button id="load-file-btn" class="action-btn">開く</button>
+                <div class="generator-controls">
+                    <label>シード <input type="text" id="map-seed-input" placeholder="空なら自動" /></label>
+                    <label>複雑さ
+                        <select id="map-complexity-select">
+                            <option value="balanced" selected>標準</option>
+                            <option value="wild">複雑</option>
+                            <option value="islands">島多め</option>
+                            <option value="highlands">山多め</option>
+                        </select>
+                    </label>
+                </div>
+                <button id="generate-map-btn" class="action-btn">自動生成</button>
+                <button id="play-btn" class="action-btn primary">このマップで遊ぶ</button>
+                <button id="clear-btn" class="action-btn danger">マップを全消去</button>
+                <button id="bundle-maps-btn" class="action-btn">バンドルマップ更新</button>
+                <a href="index.html" class="action-btn link-btn">ゲーム画面に戻る</a>
+
+                <!-- Map Size Controls -->
+                <div class="palette-section map-size-section">
+                    <h3>マップサイズ設定</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                        <label>幅(W): <input type="number" id="map-width-input" value="20" min="10" max="80" style="width: 50px;" /></label>
+                        <label>高さ(H): <input type="number" id="map-height-input" value="15" min="10" max="80" style="width: 50px;" /></label>
+                    </div>
+                    <button id="resize-btn" class="action-btn">サイズ変更を適用</button>
+                </div>
+            
+    </div>
+
+    <!-- Data Import/Export Overlay Modal -->
+    <div id="modal-overlay" style="display: none;">
+        <div id="modal-box">
+            <h3 id="modal-title">マップ書き出し</h3>
+            <p id="modal-desc">以下のコードをコピーしてマップデータを保存・共有してください：</p>
+            <textarea id="modal-textarea" readonly></textarea>
+            <div id="modal-buttons">
+                <button id="modal-close-btn" class="action-btn">閉じる</button>
+                <button id="modal-action-btn" class="action-btn primary" style="display:none;">読み込む</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load game components dependencies -->
+    <script src="assets.js"></script>
+    <script src="map.js"></script>
+    <script src="unit.js"></script>
+    <script src="pwa.js"></script>
+    <script src="editor.js"></script>
+</body>
+</html>

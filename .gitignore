@@ -1,0 +1,11 @@
+# Visual Studio temporary files
+.vs/
+
+# Node.js
+node_modules/
+*.log
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+.DS_Store
